@@ -1,0 +1,53 @@
+1, install gearman
+sudo aptitude install gearman
+
+2, start gearmand in the background
+sudo gearmand -d
+
+3, check if gearmand is running
+sudo ps aux | grep gearman
+sudo netstat -tulp | grep gearman
+
+4, test gearman worker and client
+sudo gearman -w -f wc --wc -l
+sudo gearman -f wc < /etc/passwd
+
+5, install gearman php extension
+sudo aptitude install php5
+sudo aptitude install php-pear
+sudo aptitude install php5-dev
+sudo aptitude install libgearman-dev
+sudo pecl install channel://pecl.php.net/gearman-0.8.3
+sudo vim /etc/php5/conf.d/gearman.ini
+extension=gearman.so
+
+6, test gearman php extension
+vim gearman_version.php
+<?php
+print gearman_version() . "\n";
+?>
+php gearman_version.php
+
+7, setup gearman worker and client in PHP
+vim gearman_workder.php
+<?php
+$worker= new GearmanWorker();
+$worker->addServer();
+$worker->addFunction("reverse", "my_reverse_function");
+while ($worker->work());
+
+function my_reverse_function($job)
+{
+  return strrev($job->workload());
+}
+?>
+php gearman_workder.php
+
+vim gearman_client.php
+<?php
+$client= new GearmanClient();
+$client->addServer();
+print $client->do("reverse", "Hello World!");
+?>
+php gearman_client.php
+
