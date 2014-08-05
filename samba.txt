@@ -1,0 +1,21 @@
+1, install samba
+sudo aptitude install samba
+
+2, add config
+sudo vim /etc/samba/smb.conf
+
+[home]
+	comment = Samba server's home
+	read only = no
+	locking = no
+	path = /home/william
+	guest ok = no
+
+3, restart samba
+sudo /etc/init.d/samba restart
+
+4, add samba users
+sudo smbpasswd -a william
+
+5, view the shared folder from windows
+\\XX.XXX.XX.XX
